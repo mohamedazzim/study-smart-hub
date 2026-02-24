@@ -1,14 +1,19 @@
+import { useNavigate } from 'react-router-dom';
 import type { Book } from '@/types';
 import { ShoppingCart, CheckCircle2, BookOpen } from 'lucide-react';
 
 interface BookCardProps {
   book: Book;
-  onBuy?: () => void;
 }
 
-const BookCard = ({ book, onBuy }: BookCardProps) => {
+const BookCard = ({ book }: BookCardProps) => {
+  const navigate = useNavigate();
+
   return (
-    <div className="animate-fade-in rounded-lg border border-border bg-card overflow-hidden shadow-sm transition-shadow hover:shadow-md">
+    <div
+      onClick={() => navigate(`/book/${book.id}`)}
+      className="animate-fade-in rounded-lg border border-border bg-card overflow-hidden shadow-sm transition-shadow hover:shadow-md cursor-pointer"
+    >
       <div className="flex h-32 items-center justify-center gradient-primary">
         <BookOpen className="h-12 w-12 text-primary-foreground/60" />
       </div>
@@ -23,10 +28,7 @@ const BookCard = ({ book, onBuy }: BookCardProps) => {
               Purchased
             </button>
           ) : (
-            <button
-              onClick={onBuy}
-              className="flex w-full items-center justify-center gap-1.5 rounded-md gradient-accent px-3 py-2 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
-            >
+            <button className="flex w-full items-center justify-center gap-1.5 rounded-md gradient-accent px-3 py-2 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90">
               <ShoppingCart className="h-4 w-4" />
               ₹{book.price}
             </button>
