@@ -1,13 +1,14 @@
+import { useNavigate } from 'react-router-dom';
 import type { Test } from '@/types';
 import { Clock, FileText, CheckCircle2, Lock } from 'lucide-react';
 
 interface TestCardProps {
   test: Test;
-  onStart?: () => void;
-  onBuy?: () => void;
 }
 
-const TestCard = ({ test, onStart, onBuy }: TestCardProps) => {
+const TestCard = ({ test }: TestCardProps) => {
+  const navigate = useNavigate();
+
   const subjectColors: Record<string, string> = {
     Mathematics: 'bg-primary/10 text-primary',
     Physics: 'bg-accent/10 text-accent',
@@ -17,6 +18,16 @@ const TestCard = ({ test, onStart, onBuy }: TestCardProps) => {
   };
 
   const tagClass = subjectColors[test.subject] || 'bg-muted text-muted-foreground';
+
+  const handleStart = () => {
+    if (test.isAttempted) {
+      navigate(`/test/${test.id}/results`, {
+        state: { answers: {}, score: test.score ?? 0, totalMarks: test.totalMarks },
+      });
+    } else {
+      navigate(`/test/${test.id}`);
+    }
+  };
 
   return (
     <div className="animate-fade-in rounded-lg border border-border bg-card p-4 shadow-sm transition-shadow hover:shadow-md">
@@ -60,7 +71,7 @@ const TestCard = ({ test, onStart, onBuy }: TestCardProps) => {
       <div className="mt-3">
         {test.isAttempted ? (
           <button
-            onClick={onStart}
+            onClick={handleStart}
             className="flex w-full items-center justify-center gap-1.5 rounded-md bg-secondary px-4 py-2.5 text-sm font-semibold text-secondary-foreground transition-colors hover:bg-secondary/80"
           >
             <CheckCircle2 className="h-4 w-4" />
@@ -68,16 +79,13 @@ const TestCard = ({ test, onStart, onBuy }: TestCardProps) => {
           </button>
         ) : test.isPurchased || test.isFree ? (
           <button
-            onClick={onStart}
+            onClick={handleStart}
             className="w-full rounded-md gradient-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
           >
             Start Test
           </button>
         ) : (
-          <button
-            onClick={onBuy}
-            className="flex w-full items-center justify-center gap-1.5 rounded-md gradient-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
-          >
+          <button className="flex w-full items-center justify-center gap-1.5 rounded-md gradient-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90">
             <Lock className="h-4 w-4" />
             Buy ₹{test.price}
           </button>
